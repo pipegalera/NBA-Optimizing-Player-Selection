@@ -15,7 +15,7 @@ chrome_options.add_argument('--profile-directory=Default')
 chrome_options.add_argument("--incognito")
 chrome_options.add_argument("--disable-plugins-discovery")
 chrome_options.add_argument("--start-maximized")
-driver_path = '/Users/mac/GitHub/NBA Scrappers/chromedriver'
+driver_path = '/Users/mac/GitHub/NBA_Scrappers/chromedriver'
 
 # Grab url and run driver
 url = 'https://stats.nba.com/players/advanced/'
@@ -66,4 +66,5 @@ df = pd.concat([players, team, stats], axis = 1)
 df.columns = header
 df.head()
 # df.columns = header
-df.to_csv('/Users/mac/GitHub/NBA Scrappers/Oficial page Advanced Stats/Advanced stats NBAcom.csv', index=False)
+df.to_csv('/Users/mac/GitHub/NBA_Scrappers/Oficial page Advanced Stats/Advanced stats NBAcom.csv', index=False)
+df.PLAYER

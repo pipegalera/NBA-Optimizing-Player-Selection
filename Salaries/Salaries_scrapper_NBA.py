@@ -8,11 +8,15 @@ url = "https://www.basketball-reference.com/contracts/players.html"
 # Opening up connection, grabbing the page
 html = urlopen(url)
 soup = BeautifulSoup(html)
-headers = ['PLAYER', 'TEAM', '2018-2019', '2019-2020', '2020-2021', '2021-2022', '2022-2023', '2023-2024', 'Signed Using', 'Guaranteed']
+headers = ['Player', 'Team', 'Salary 2018-19', 'Salary 2019-20', 'Salary 2020-21', 'Salary 2021-22', 'Salary 2022-23', 'Salary 2023-24', 'Signed Using', 'Guaranteed']
 rows = soup.findAll('tr')[1:]
 salaries = [[td.getText() for td in rows[i].findAll('td')]
             for i in range(len(rows))]
+
 salaries = pd.DataFrame(salaries, columns = headers).dropna()
 salaries.head()
+salaries = salaries.apply(lambda x: x.str.replace('$', ''))
+salaries = salaries.apply(lambda x: x.str.replace(',', ''))
 
-salaries.to_csv('/Users/mac/GitHub/NBA Scrappers/Salaries/Salaries_scrapper_NBA.csv', index=False)
+salaries.to_csv('/Users/mac/GitHub/NBA_Scrappers/Salaries/Salaries_scrapper_NBA.csv', index=False)
+salaries.duplicated
