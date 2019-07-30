@@ -65,6 +65,7 @@ stats.shape
 df = pd.concat([players, team, stats], axis = 1)
 df.columns = header
 df.head()
-# df.columns = header
+df = df.rename(columns = {'PLAYER': 'Player'})
+
+
 df.to_csv('/Users/mac/GitHub/NBA_Scrappers/Oficial page Advanced Stats/Advanced stats NBAcom.csv', index=False)
-df.PLAYER
