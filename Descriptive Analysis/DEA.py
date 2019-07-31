@@ -63,7 +63,7 @@ west_per_top10 = pd.DataFrame.from_dict(west_per_top10, orient = 'index').stack(
 west_per_top10 = west_per_top10.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
 
 
-#Table 2 of the paper (East)
+#Table 2 of the paper (Top 5 East)
 Table_east_top5 = pd.merge(east_per_top5, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
 Table_east_top5['Expected'] = Table_east_top5['PER'].rank(method = 'max', ascending = False)
 Table_east_top5['Real'] = Table_east_top5['WIN%'].rank(method = 'max', ascending = False)
@@ -72,7 +72,7 @@ Table_east_top5.to_csv('/Users/mac/GitHub/NBA_Scrappers/Descriptive Analysis/Tab
 
 Table_east_top5['PER'].corr(Table_east_top5['WIN%'])
 
-#Table 2 of the paper (West) -> Robusttest
+#Table 2 of the paper (Top 5 West) -> Robusttest
 
 Table_west_top5 = pd.merge(west_per_top5, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
 Table_west_top5['Expected'] = Table_west_top5['PER'].rank(method = 'max', ascending = False)
@@ -82,7 +82,7 @@ Table_west_top5.to_csv('/Users/mac/GitHub/NBA_Scrappers/Descriptive Analysis/Tab
 
 Table_west_top5['PER'].corr(Table_west_top5['WIN%'])
 
-#Table 3 of the paper (East)
+#Table 3 of the paper (Top 10 East)
 Table_east_top10 = pd.merge(east_per_top10, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
 Table_east_top10['Expected'] = Table_east_top10['PER'].rank(method = 'max', ascending = False)
 Table_east_top10['Real'] = Table_east_top10['WIN%'].rank(method = 'max', ascending = False)
@@ -91,7 +91,7 @@ Table_east_top10.to_csv('/Users/mac/GitHub/NBA_Scrappers/Descriptive Analysis/Ta
 
 Table_east_top10['PER'].corr(Table_east_top10['WIN%'])
 
-#Table 3 of the paper (West) -> Robusttest
+#Table 3 of the paper (Top 10 West) -> Robusttest
 Table_west_top10 = pd.merge(west_per_top10, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
 Table_west_top10['Expected'] = Table_west_top10['PER'].rank(method = 'max', ascending = False)
 Table_west_top10['Real'] = Table_west_top10['WIN%'].rank(method = 'max', ascending = False)
