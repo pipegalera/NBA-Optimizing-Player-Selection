@@ -11,6 +11,7 @@ data_players = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Final Dataset/Final_
 teams = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Team Stats/team_stats.csv')
 teams_2 = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Advanced Stats/Advanced_stats_NBA_2.csv')
 data_teams = pd.merge(teams, teams_2, on = 'Team')
+data_teams.to_csv('/Users/mac/GitHub/NBA_Scrappers/Team Stats/final_data.csv', index = False)
 
 # Count number of players
 sum_players = data_players['Player'].count()
@@ -38,7 +39,7 @@ winrate = data_teams['WIN%'].groupby(data_teams['Team']).sum()
 winrate = pd.DataFrame(winrate).reset_index()
 winrate
 
-#PER of the 5 and 10 most used Players, by team
+#PER of the 5 and 10 most used Players, and 5 middle used players, by team
 
 east = ['Cleveland Cavaliers','Toronto Raptors', 'Washington Wizards', 'Boston Celtics', 'Chicago Bulls', 'Miami Heat', 'Indiana Pacers', 'Brooklyn Nets', 'Charlotte Hornets', 'Orlando Magic', 'New York Knicks', 'Milwaukee Bucks', 'Atlanta Hawks', 'Detroit Pistons', 'Philadelphia 76ers']
 west = ['Dallas Mavericks', 'Denver Nuggets', 'Golden State Warriors', 'Houston Rockets', 'LA Clippers', 'Los Angeles Lakers', 'Memphis Grizzlies', 'Minnesota Timberwolves', 'New Orleans Pelicans', 'Oklahoma City Thunder', 'Phoenix Suns', 'Portland Trail Blazers', 'Sacramento Kings', 'San Antonio Spurs', 'Utah Jazz']
@@ -46,22 +47,42 @@ east_per_top5 = {}
 west_per_top5 = {}
 east_per_top10 = {}
 west_per_top10 = {}
+east_per_mid5 = {}
+west_per_mid5 = {}
 
 for i,x in zip(east, west):
     east_per_top5['{}'.format(i)]  = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['PER'].sum()
     west_per_top5['{}'.format(x)]  = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(5,'MP')['PER'].sum()
     east_per_top10['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['PER'].sum()
     west_per_top10['{}'.format(x)] = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10,'MP')['PER'].sum()
+    east_per_mid5['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['PER'].drop(data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10, 'MP')['PER'].index[:5]).sum()
+    west_per_mid5['{}'.format(x)] = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10,'MP')['PER'].drop(data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10, 'MP')['PER'].index[:5]).sum()
 
 # From dicts to Dataframe
 east_per_top5 = pd.DataFrame.from_dict(east_per_top5, orient = 'index').stack().reset_index(level=0)
 east_per_top5 = east_per_top5.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
+
 east_per_top10 = pd.DataFrame.from_dict(east_per_top10, orient = 'index').stack().reset_index(level=0)
 east_per_top10 = east_per_top10.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
+
+east_per_mid5 = pd.DataFrame.from_dict(east_per_mid5, orient = 'index').stack().reset_index(level=0)
+east_per_mid5 = east_per_mid5.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
+
 west_per_top5 = pd.DataFrame.from_dict(west_per_top5, orient = 'index').stack().reset_index(level=0)
 west_per_top5 = west_per_top5.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
+
 west_per_top10 = pd.DataFrame.from_dict(west_per_top10, orient = 'index').stack().reset_index(level=0)
 west_per_top10 = west_per_top10.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
+
+west_per_mid5 = pd.DataFrame.from_dict(west_per_mid5, orient = 'index').stack().reset_index(level=0)
+west_per_mid5 = west_per_mid5.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
+
+# Save Sum PER
+PER_team_mostmin = east_per_top5.append(west_per_top5).set_index('Team')
+PER_team_mostmin.to_csv('/Users/mac/GitHub/NBA_Scrappers/Prediction analysis/x1.csv')
+
+PER_team_midmin = east_per_mid5.append(west_per_mid5).set_index('Team')
+PER_team_midmin.to_csv('/Users/mac/GitHub/NBA_Scrappers/Prediction analysis/x2.csv')
 
 #Table 2 of the paper (Top 5 East)
 Table_east_top5 = pd.merge(east_per_top5, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
@@ -122,6 +143,7 @@ fig2['NRtg'].corr(fig2['WIN%']) # Correlation of 0.983
 
 #Matrix of correlations -> Feature selection
 features_sel = data_teams.drop(columns = ['Team', 'GP'])
-test = pd.get_dummies(features_sel[['Conf', 'Div']])
+dummies = pd.get_dummies(features_sel[['Conf', 'Div']])
+features_sel = pd.concat([features_sel, dummies], axis = 1)
 corr = features_sel.corr()
-corr.style.background_gradient(cmap = 'coolwarm')
+corr.style.background_gradient(cmap = 'coolwarm') # Conferencia Este corr 0.13 with win rate
