@@ -2,7 +2,8 @@
 import pandas as pd
 import numpy as np
 import matplotlib as plt
-from matplotlib import style
+from matplotlib.pyplot import style
+
 # Me he quedado en hacer la matrix de correlaciones para elegir las features.
 # Idea: convertir division y conference a dummies
 
@@ -62,7 +63,6 @@ west_per_top5 = west_per_top5.rename(columns = {'level_0': 'Team', 0: 'PER'}).re
 west_per_top10 = pd.DataFrame.from_dict(west_per_top10, orient = 'index').stack().reset_index(level=0)
 west_per_top10 = west_per_top10.rename(columns = {'level_0': 'Team', 0: 'PER'}).reset_index(drop = True)
 
-
 #Table 2 of the paper (Top 5 East)
 Table_east_top5 = pd.merge(east_per_top5, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
 Table_east_top5['Expected'] = Table_east_top5['PER'].rank(method = 'max', ascending = False)
@@ -121,5 +121,7 @@ fig2['NRtg'].corr(fig2['WIN%']) # Correlation of 0.983
 
 
 #Matrix of correlations -> Feature selection
-features_sel = data_teams.drop(columns = 'Team')
-features_sel.info()
+features_sel = data_teams.drop(columns = ['Team', 'GP'])
+test = pd.get_dummies(features_sel[['Conf', 'Div']])
+corr = features_sel.corr()
+corr.style.background_gradient(cmap = 'coolwarm')
