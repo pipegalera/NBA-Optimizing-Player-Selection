@@ -1,15 +1,11 @@
-
-
-# Lo ultimo que has hecho es salaries bien, Mira si el merge se hace bien con stats.
-# Despues, mira si puedes incorporar stats_2 de nba.com, sino no te comas la cabeza.
-
 import pandas as pd
 import numpy as np
 
-stats = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Advanced Stats/Advanced_stats_NBA.csv')
-salaries = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Salaries/Salaries_scrapper_NBA.csv')
+BR_PS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_PS.csv')
+BR_PSalaries = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_PSalaries.csv')
+NBA_PS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_PS.csv')
 
-''' Draymond ?
+''' Draymond can be included, but includes Play-off games
 draymond = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Final Dataset/draymond.csv')
 draymond
 draymond = draymond.loc[draymond['season'] == 2018]
@@ -22,7 +18,7 @@ draymond.loc[draymond['Player'].duplicated()]
 # Merging datasets
 df = pd.merge(stats, salaries, on = 'Player')
 
-# Players that play assumption
+# 'Hiring players to play' assumption
 df = df[df['Team_x'] == df['Team_y']]
 df = df.loc[df['G'] >= 2]
 
@@ -35,3 +31,8 @@ df['Team'] = df['Team'].replace(sort_names, long_names)
 
 df.to_csv('/Users/mac/GitHub/NBA_Scrappers/Final Dataset/Final_Data.csv', index=False)
 df.head()
+
+# NECESITO EL OFFENSIVE AND DEFENSIVE RATING INDIVIDUAL, POR LO QUE TENGO QUE MERGE STATS 1 y 2 (RB y NBA.com)
+
+stats_2
+stats.shape

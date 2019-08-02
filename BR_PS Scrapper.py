@@ -26,6 +26,6 @@ adv_stats = adv_stats.drop([18, 23], axis = 1)
 adv_stats.columns = headers
 adv_stats.shape
 
-adv_stats.to_csv('/Users/mac/GitHub/NBA_Scrappers/Advanced Stats/Advanced_stats_NBA.csv', index=False)
-# adv_stats = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Advanced Stats/Advanced_stats_NBA.csv')
-adv_stats
+adv_stats.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/BR Player Advanced Stats.csv', index=False)
+BR_PS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_PS.csv')
+BR_PS.head()

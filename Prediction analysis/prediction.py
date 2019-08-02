@@ -18,10 +18,17 @@ data_teams = data_teams.set_index('Team')
 dummies = pd.get_dummies(data_teams[['Conf', 'Div']])
 df = data_teams.drop(columns = ['W', 'L','GP', 'Conf', 'Div']) # GP is constant: 82
 df = pd.concat([df, dummies], axis = 1)
+
+
+
+
+
+
 #Trainning the model
 df.drop(columns = 'WIN%')
 y = df.iloc[:,0].values
-
+df.columns
+df[['PER_top5', 'PER_mid5', 'ORtg', 'DRtg']]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42)
 

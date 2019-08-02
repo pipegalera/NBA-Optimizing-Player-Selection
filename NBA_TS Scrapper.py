@@ -58,5 +58,6 @@ teams.shape
 df = pd.concat([teams, stats], axis = 1)
 df.columns = header
 df = df.rename(columns = {'TEAM': 'Team'})
-df.to_csv('/Users/mac/GitHub/NBA_Scrappers/Team Stats/team_stats.csv', index=False)
-df.head()
+df.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_TS.csv', index=False)
+NBA_TS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_TS.csv')
+NBA_TS.head()

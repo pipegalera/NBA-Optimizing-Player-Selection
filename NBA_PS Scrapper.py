@@ -15,12 +15,12 @@ chrome_options.add_argument('--profile-directory=Default')
 chrome_options.add_argument("--incognito")
 chrome_options.add_argument("--disable-plugins-discovery")
 chrome_options.add_argument("--start-maximized")
-driver_path = '/Users/mac/GitHub/NBA_Scrappers/chromedriver'
+driver_path = '/Users/mac/GitHub/NBA Optimizing Player Selection/chromedriver'
 
 # Grab url and run driver
 url = 'https://stats.nba.com/players/advanced/'
 # Check page status
-timeout = 10
+timeout = 20
 try:
     # Assumption: if the NBA logo loads, then the page loads.
     driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
@@ -60,12 +60,11 @@ stats = stats[0].str.split(' ', 1, expand = True)
 team = stats[0]
 stats = stats[1]
 stats = stats.str.split(' ', 20, expand = True)
-players.shape
-stats.shape
 df = pd.concat([players, team, stats], axis = 1)
 df.columns = header
-df.head()
 df = df.rename(columns = {'PLAYER': 'Player'})
 
 
-df.to_csv('/Users/mac/GitHub/NBA_Scrappers/Oficial page Advanced Stats/Advanced stats NBAcom.csv', index=False)
+df.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_PS.csv', index=False)
+NBA_PS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_PS.csv')
+NBA_PS

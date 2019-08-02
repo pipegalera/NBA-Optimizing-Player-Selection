@@ -44,4 +44,6 @@ salaries.loc[salaries['Player'] == 'Cameron Reynolds']
 '''
 
 
-salaries.to_csv('/Users/mac/GitHub/NBA_Scrappers/Salaries/Salaries_scrapper_NBA.csv', index=False)
+salaries.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_PSalaries.csv', index=False)
+BR_PSalaries = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_PSalaries.csv')
+BR_PSalaries.head()

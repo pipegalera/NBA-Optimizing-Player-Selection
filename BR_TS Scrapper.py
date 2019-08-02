@@ -22,5 +22,6 @@ adv_stats_2 = pd.DataFrame(stats).dropna()
 adv_stats_2.columns = headers
 adv_stats_2 = adv_stats_2.drop(columns = ['W', 'L'])
 
-adv_stats_2.to_csv('/Users/mac/GitHub/NBA_Scrappers/Advanced Stats/Advanced_stats_NBA_2.csv', index=False)
-# adv_stats_2 = pd.read_csv('/Users/mac/GitHub/NBA_Scrappers/Advanced Stats/Advanced_stats_NBA_2.csv')
+adv_stats_2.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_TS.csv', index=False)
+BR_TS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_TS.csv')
+BR_TS.head()
