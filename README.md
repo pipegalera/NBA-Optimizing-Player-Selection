@@ -11,4 +11,4 @@ The py files are named according to the purpose:
  - PS: Stands for Player Statistics
  - TS: Stands for Team Statistics
 
- For example, NBA_PS.py is the scrapper of NBA.com of the player statistics.
+ For example, NBA_PS Scrapper.py is the scrapper of NBA.com of the player statistics.
