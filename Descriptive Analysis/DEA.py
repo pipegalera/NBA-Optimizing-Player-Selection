@@ -19,12 +19,10 @@ n_players
 # All players PER summed grouped by Team (include residual players)
 PER_team = data_players['PER'].groupby(data_players['Team']).sum()
 PER_team = pd.DataFrame(PER_team).reset_index()
-PER_team
 
 #Win rate by teams
 winrate = data_teams['WIN%'].groupby(data_teams['Team']).sum()
 winrate = pd.DataFrame(winrate).reset_index()
-winrate
 
 # PER of the 5 and 10 most used Players, and 5 middle used players, by team
 # Offensive and Defensive Rating of the 5 and 10 most used Players, and 5 middle used players, by team
