@@ -1,0 +1,16 @@
+Team,PER_top5,WIN%,Expected,Real
+Houston Rockets,95.5,0.6459999999999999,1.0,4.0
+Golden State Warriors,91.19999999999999,0.695,2.0,1.0
+Los Angeles Clippers,90.8,0.585,3.0,8.0
+Denver Nuggets,90.60000000000001,0.659,5.0,2.0
+New Orleans Pelicans,90.60000000000001,0.402,5.0,14.0
+Oklahoma City Thunder,89.4,0.598,6.0,6.0
+Portland Trail Blazers,88.9,0.6459999999999999,7.0,4.0
+San Antonio Spurs,85.2,0.585,8.0,8.0
+Sacramento Kings,83.10000000000001,0.476,9.0,9.0
+Utah Jazz,81.3,0.61,10.0,5.0
+Minnesota Timberwolves,80.2,0.439,11.0,11.0
+Phoenix Suns,78.4,0.232,12.0,15.0
+Dallas Mavericks,76.89999999999999,0.402,13.0,14.0
+Memphis Grizzlies,76.1,0.402,14.0,14.0
+Los Angeles Lakers,75.2,0.451,15.0,10.0

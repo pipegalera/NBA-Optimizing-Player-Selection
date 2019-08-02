@@ -15,12 +15,12 @@ chrome_options.add_argument('--profile-directory=Default')
 chrome_options.add_argument("--incognito")
 chrome_options.add_argument("--disable-plugins-discovery")
 chrome_options.add_argument("--start-maximized")
-driver_path = '/Users/mac/GitHub/NBA_Scrappers/chromedriver'
+driver_path = '/Users/mac/GitHub/NBA Optimizing Player Selection/Scrappers/chromedriver'
 
 # Grab url and run driver
 url = 'https://stats.nba.com/teams/traditional/?sort=W_PCT&dir=-1'
 # Check page status
-timeout = 10
+timeout = 20
 try:
     # Assumption: if the NBA logo loads, then the page loads.
     driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
@@ -41,7 +41,6 @@ file_header.append([x.text for x in headers])
 header = pd.DataFrame(file_header)
 header = header[np.arange(1, 28)]
 header = header.values.tolist()
-header
 # Body
 body = table.find_elements_by_tag_name('tbody')
 file_body = []
@@ -58,6 +57,7 @@ teams.shape
 df = pd.concat([teams, stats], axis = 1)
 df.columns = header
 df = df.rename(columns = {'TEAM': 'Team'})
+df['Team'] = df['Team'].replace('LA Clippers', 'Los Angeles Clippers')
 df.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_TS.csv', index=False)
 NBA_TS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_TS.csv')
 NBA_TS.head()
