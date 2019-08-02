@@ -65,6 +65,6 @@ df.columns = header
 df = df.rename(columns = {'PLAYER': 'Player'})
 
 
-df.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_PS.csv', index=False)
-NBA_PS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_PS.csv')
+df.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/NBA_PS.csv', index=False)
+NBA_PS = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/NBA_PS.csv')
 NBA_PS

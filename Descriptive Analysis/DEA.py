@@ -5,8 +5,8 @@ import matplotlib as plt
 from matplotlib.pyplot import style
 
 
-data_players = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_players_data.csv')
-data_teams = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/total_team_data.csv')
+data_players = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_players_data.csv')
+data_teams = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/total_team_data.csv')
 
 # Count number of players
 sum_players = data_players['Player'].count()
@@ -39,7 +39,7 @@ east_per_top10 = {}
 west_per_top10 = {}
 east_per_mid5 = {}
 west_per_mid5 = {}
-data_players.loc[data_players['Team'] == '{}'.format('Cleveland Cavaliers')].nlargest(5,'MP')['PER'].sum()
+# data_players.loc[data_players['Team'] == '{}'.format('Cleveland Cavaliers')].nlargest(5,'MP')['PER'].sum()
 
 for i,x in zip(east, west):
     east_per_top5['{}'.format(i)]  = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['PER'].sum()
@@ -79,7 +79,7 @@ PER_team_mid5  = east_per_mid5.append(west_per_mid5).reset_index(drop = True)
 Table_east_top5 = pd.merge(east_per_top5, winrate, on = 'Team').sort_values(by = ['PER_top5'], ascending = False)
 Table_east_top5['Expected'] = Table_east_top5['PER_top5'].rank(method = 'max', ascending = False)
 Table_east_top5['Real'] = Table_east_top5['WIN%'].rank(method = 'max', ascending = False)
-Table_east_top5.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Descriptive Analysis/Tables/Table_east_top5.csv', index = False)
+Table_east_top5.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_east_top5.csv', index = False)
 
 Table_east_top5['PER_top5'].corr(Table_east_top5['WIN%'])
 
@@ -88,7 +88,7 @@ Table_east_top5['PER_top5'].corr(Table_east_top5['WIN%'])
 Table_west_top5 = pd.merge(west_per_top5, winrate, on = 'Team').sort_values(by = ['PER_top5'], ascending = False)
 Table_west_top5['Expected'] = Table_west_top5['PER_top5'].rank(method = 'max', ascending = False)
 Table_west_top5['Real'] = Table_west_top5['WIN%'].rank(method = 'max', ascending = False)
-Table_west_top5.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Descriptive Analysis/Tables/Table_west_top5.csv', index = False)
+Table_west_top5.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_west_top5.csv', index = False)
 
 Table_west_top5['PER_top5'].corr(Table_west_top5['WIN%'])
 
@@ -97,7 +97,7 @@ Table_east_top10 = pd.merge(east_per_top10, winrate, on = 'Team').sort_values(by
 Table_east_top10['Expected'] = Table_east_top10['PER_top10'].rank(method = 'max', ascending = False)
 Table_east_top10['Real'] = Table_east_top10['WIN%'].rank(method = 'max', ascending = False)
 
-Table_east_top10.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Descriptive Analysis/Tables/Table_east_top10.csv', index = False)
+Table_east_top10.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_east_top10.csv', index = False)
 
 Table_east_top10['PER_top10'].corr(Table_east_top10['WIN%'])
 
@@ -105,7 +105,7 @@ Table_east_top10['PER_top10'].corr(Table_east_top10['WIN%'])
 Table_west_top10 = pd.merge(west_per_top10, winrate, on = 'Team').sort_values(by = ['PER_top10'], ascending = False)
 Table_west_top10['Expected'] = Table_west_top10['PER_top10'].rank(method = 'max', ascending = False)
 Table_west_top10['Real'] = Table_west_top10['WIN%'].rank(method = 'max', ascending = False)
-Table_west_top10.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Descriptive Analysis/Tables/Table_west_top10.csv', index = False)
+Table_west_top10.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_west_top10.csv', index = False)
 
 Table_west_top10['PER_top10'].corr(Table_west_top10['WIN%'])
 
@@ -114,7 +114,7 @@ net_rating = data_teams[['ORtg/A', 'DRtg/A', 'NRtg/A']].groupby(data_teams['Team
 net_rating = pd.DataFrame(net_rating).reset_index()
 Table4
 Table4= pd.merge(net_rating, winrate, on = 'Team').sort_values(by = ['NRtg/A'], ascending = False).reset_index(drop = True)
-Table4.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Descriptive Analysis/Tables/Table4.csv', index = False)
+Table4.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table4.csv', index = False)
 
 # Figure 1
 net_adjusted = data_teams['NRtg/A'].groupby(data_teams['Team']).sum()

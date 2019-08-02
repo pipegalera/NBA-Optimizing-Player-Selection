@@ -58,6 +58,6 @@ df = pd.concat([teams, stats], axis = 1)
 df.columns = header
 df = df.rename(columns = {'TEAM': 'Team'})
 df['Team'] = df['Team'].replace('LA Clippers', 'Los Angeles Clippers')
-df.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_TS.csv', index=False)
-NBA_TS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_TS.csv')
+df.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/NBA_TS.csv', index=False)
+NBA_TS = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/NBA_TS.csv')
 NBA_TS.head()

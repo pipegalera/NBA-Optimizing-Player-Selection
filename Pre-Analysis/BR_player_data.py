@@ -1,21 +1,22 @@
 import pandas as pd
 import numpy as np
 
-BR_PS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_PS.csv')
-BR_PSalaries = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_PSalaries.csv')
-NBA_PS = pd.read_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/NBA_PS.csv')
+BR_PS = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_PS.csv')
+BR_PSalaries = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_PSalaries.csv')
+NBA_PS = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/NBA_PS.csv')
 
 
 # Merging BR_PS and BR_PSalaries
 df = pd.merge(BR_PS, BR_PSalaries, on = 'Player')
-
+df.shape
 # 'Hiring players to play' assumption
-df = df[df['Team_x'] == df['Team_y']]
+df.columns
+df = df[df['Team_x'] == df['Team']]
 df = df.loc[df['G'] >= 2]
 df.shape
 
 # Renaming columns and cleaning Dataframe
-df = df.drop(columns = 'Team_y')
+df = df.drop(columns = 'Team')
 df = df.rename(columns = {'Team_x': 'Team'})
 sort_names = ['CLE','TOR', 'WAS', 'BOS', 'CHI', 'MIA', 'IND', 'BRK', 'CHO', 'ORL', 'NYK', 'MIL',
 'ATL', 'DET', 'PHI', 'DAL', 'DEN', 'GSW', 'HOU', 'LAC', 'LAL', 'MEM', 'MIN', 'NOP', 'OKC', 'PHO',
@@ -29,7 +30,5 @@ long_names = ['Cleveland Cavaliers','Toronto Raptors', 'Washington Wizards', 'Bo
 'Portland Trail Blazers', 'Sacramento Kings', 'San Antonio Spurs', 'Utah Jazz']
 
 df['Team'] = df['Team'].replace(sort_names, long_names)
-df.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/BR_players_data.csv', index=False)
+df.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_players_data.csv', index=False)
 df.shape
-
-df
