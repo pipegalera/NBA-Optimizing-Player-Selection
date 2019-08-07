@@ -44,7 +44,7 @@ stats = stats.drop(columns = ['', 'Pos', 'Age', 'G', 'MP'],axis = 1)
 # stats['Player'].loc[562] == adv_stats['Player'].loc[562]
 
 merge = pd.merge(stats, adv_stats, on = 'Player')
-merge = merge[merge['Team_x'] == merge['Team_y']].reset_index()
+merge = merge[merge['Team_x'] == merge['Team_y']].reset_index(drop = True)
 
 merge.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_PS.csv', index=False)
 BR_PS = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_PS.csv')

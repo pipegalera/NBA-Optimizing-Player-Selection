@@ -15,7 +15,6 @@ n_players = np.subtract(sum_players, duplicated_players)
 duplicated_players
 n_players
 
-
 # All players PER summed grouped by Team (include residual players)
 PER_team = data_players['PER'].groupby(data_players['Team']).sum()
 PER_team = pd.DataFrame(PER_team).reset_index()
@@ -39,41 +38,78 @@ east_per_top10 = {}
 west_per_top10 = {}
 east_per_mid5 = {}
 west_per_mid5 = {}
-# data_players.loc[data_players['Team'] == '{}'.format('Cleveland Cavaliers')].nlargest(5,'MP')['PER'].sum()
+east_drtg_top5 = {}
+west_drtg_top5 = {}
+east_drtg_top10 = {}
+west_drtg_top10 = {}
+east_drtg_mid5 = {}
+west_drtg_mid5 = {}
+
+
+data_players.columns
+# data_players.loc[data_players['Team'] == '{}'.format('Cleveland Cavaliers')].nlargest(5,'MP')['DRtg'].sum()
 
 for i,x in zip(east, west):
+    #PER top 5
     east_per_top5['{}'.format(i)]  = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['PER'].sum()
     west_per_top5['{}'.format(x)]  = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(5,'MP')['PER'].sum()
+    #PER top 10
     east_per_top10['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['PER'].sum()
     west_per_top10['{}'.format(x)] = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10,'MP')['PER'].sum()
+    #PER mid 5
     east_per_mid5['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['PER'].drop(data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10, 'MP')['PER'].index[:5]).sum()
     west_per_mid5['{}'.format(x)] = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10,'MP')['PER'].drop(data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10, 'MP')['PER'].index[:5]).sum()
 
-# From dicts to Dataframe
+    #DRtg top 5
+    east_drtg_top5['{}'.format(i)]  = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['DRtg'].sum()
+    west_drtg_top5['{}'.format(x)]  = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(5,'MP')['DRtg'].sum()
+    #DRtg top 10
+    east_drtg_top10['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['DRtg'].sum()
+    west_drtg_top10['{}'.format(x)] = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10,'MP')['DRtg'].sum()
+    #DRtg mid 5
+    east_drtg_mid5['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['DRtg'].drop(data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10, 'MP')['DRtg'].index[:5]).sum()
+    west_drtg_mid5['{}'.format(x)] = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10,'MP')['DRtg'].drop(data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10, 'MP')['DRtg'].index[:5]).sum()
+
+# PER dicts to Dataframe
 east_per_top5 = pd.DataFrame.from_dict(east_per_top5, orient = 'index').stack().reset_index(level=0)
 east_per_top5 = east_per_top5.rename(columns = {'level_0': 'Team', 0: 'PER_top5'}).reset_index(drop = True)
-
-east_per_top10 = pd.DataFrame.from_dict(east_per_top10, orient = 'index').stack().reset_index(level=0)
-east_per_top10 = east_per_top10.rename(columns = {'level_0': 'Team', 0: 'PER_top10'}).reset_index(drop = True)
-
-east_per_mid5 = pd.DataFrame.from_dict(east_per_mid5, orient = 'index').stack().reset_index(level=0)
-east_per_mid5 = east_per_mid5.rename(columns = {'level_0': 'Team', 0: 'PER_mid5'}).reset_index(drop = True)
-
 west_per_top5 = pd.DataFrame.from_dict(west_per_top5, orient = 'index').stack().reset_index(level=0)
 west_per_top5 = west_per_top5.rename(columns = {'level_0': 'Team', 0: 'PER_top5'}).reset_index(drop = True)
 
+east_per_top10 = pd.DataFrame.from_dict(east_per_top10, orient = 'index').stack().reset_index(level=0)
+east_per_top10 = east_per_top10.rename(columns = {'level_0': 'Team', 0: 'PER_top10'}).reset_index(drop = True)
 west_per_top10 = pd.DataFrame.from_dict(west_per_top10, orient = 'index').stack().reset_index(level=0)
 west_per_top10 = west_per_top10.rename(columns = {'level_0': 'Team', 0: 'PER_top10'}).reset_index(drop = True)
 
+east_per_mid5 = pd.DataFrame.from_dict(east_per_mid5, orient = 'index').stack().reset_index(level=0)
+east_per_mid5 = east_per_mid5.rename(columns = {'level_0': 'Team', 0: 'PER_mid5'}).reset_index(drop = True)
 west_per_mid5 = pd.DataFrame.from_dict(west_per_mid5, orient = 'index').stack().reset_index(level=0)
 west_per_mid5 = west_per_mid5.rename(columns = {'level_0': 'Team', 0: 'PER_mid5'}).reset_index(drop = True)
 
-# Save Sum PER
+# DRtg dicts to Dataframe
+east_drtg_top5 = pd.DataFrame.from_dict(east_drtg_top5, orient = 'index').stack().reset_index(level=0)
+east_drtg_top5 = east_drtg_top5.rename(columns = {'level_0': 'Team', 0: 'DRtg_top5'}).reset_index(drop = True)
+west_drtg_top5 = pd.DataFrame.from_dict(west_drtg_top5, orient = 'index').stack().reset_index(level=0)
+west_drtg_top5 = west_drtg_top5.rename(columns = {'level_0': 'Team', 0: 'DRtg_top5'}).reset_index(drop = True)
+
+east_drtg_top10 = pd.DataFrame.from_dict(east_drtg_top10, orient = 'index').stack().reset_index(level=0)
+east_drtg_top10 = east_drtg_top10.rename(columns = {'level_0': 'Team', 0: 'DRtg_top10'}).reset_index(drop = True)
+west_drtg_top10 = pd.DataFrame.from_dict(west_drtg_top10, orient = 'index').stack().reset_index(level=0)
+west_drtg_top10 = west_drtg_top10.rename(columns = {'level_0': 'Team', 0: 'DRtg_top10'}).reset_index(drop = True)
+
+east_drtg_mid5 = pd.DataFrame.from_dict(east_drtg_mid5, orient = 'index').stack().reset_index(level=0)
+east_drtg_mid5 = east_drtg_mid5.rename(columns = {'level_0': 'Team', 0: 'DRtg_mid5'}).reset_index(drop = True)
+west_drtg_mid5 = pd.DataFrame.from_dict(west_drtg_mid5, orient = 'index').stack().reset_index(level=0)
+west_drtg_mid5 = west_drtg_mid5.rename(columns = {'level_0': 'Team', 0: 'DRtg_mid5'}).reset_index(drop = True)
+
+# Save Joined East + West Sum PER and DRtg
 PER_team_top5  = east_per_top5.append(west_per_top5).reset_index(drop = True)
 PER_team_top10 = east_per_top10.append(west_per_top10).reset_index(drop = True)
 PER_team_mid5  = east_per_mid5.append(west_per_mid5).reset_index(drop = True)
 
-
+DRtg_team_top5  = east_drtg_top5.append(west_drtg_top5).reset_index(drop = True)
+DRtg_team_top10 = east_drtg_top10.append(west_drtg_top10).reset_index(drop = True)
+DRtg_team_mid5  = east_drtg_mid5.append(west_drtg_mid5).reset_index(drop = True)
 
 #Table 2 of the paper (Top 5 East)
 Table_east_top5 = pd.merge(east_per_top5, winrate, on = 'Team').sort_values(by = ['PER_top5'], ascending = False)
@@ -112,8 +148,7 @@ Table_west_top10['PER_top10'].corr(Table_west_top10['WIN%'])
 # Table 4 Paper
 net_rating = data_teams[['ORtg/A', 'DRtg/A', 'NRtg/A']].groupby(data_teams['Team']).sum()
 net_rating = pd.DataFrame(net_rating).reset_index()
-Table4
-Table4= pd.merge(net_rating, winrate, on = 'Team').sort_values(by = ['NRtg/A'], ascending = False).reset_index(drop = True)
+Table4 = pd.merge(net_rating, winrate, on = 'Team').sort_values(by = ['NRtg/A'], ascending = False).reset_index(drop = True)
 Table4.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table4.csv', index = False)
 
 # Figure 1
@@ -128,17 +163,17 @@ net = pd.DataFrame(net)
 fig2 = pd.merge(net, winrate, on = 'Team').sort_values(by = ['NRtg'], ascending = False).reset_index(drop = True)
 fig2['NRtg'].corr(fig2['WIN%']) # Correlation of 0.980
 
-#Matrix of correlations -> Feature selection
-data_teams = pd.merge(data_teams, PER_team_top5, on = 'Team')
-data_teams = pd.merge(data_teams, PER_team_top10, on = 'Team')
-data_teams = pd.merge(data_teams, PER_team_mid5, on = 'Team')
-data_teams.to_csv('/Users/mac/GitHub/NBA Optimizing Player Selection/Datasets/data_teams_extraper.csv', index = False)
-data_teams
-features_sel = data_teams.drop(columns = 'Team')
-dummies = pd.get_dummies(features_sel[['Conf', 'Div']])
-features_sel = pd.concat([features_sel, dummies], axis = 1)
-corr = features_sel.corr(method = 'pearson')
-corr.style.background_gradient(cmap = 'coolwarm')
+# Save the new dataset
 
+#list = [PER_team_top5, PER_team_top10, PER_team_mid5, DRtg_team_top5, DRtg_team_top10, DRtg_team_mid5]
 
-# Why the the second unit efficiency is negatively correlated with winning?
+merged_data_teams = pd.merge(data_teams, PER_team_top5, on = 'Team')
+merged_data_teams = pd.merge(merged_data_teams, PER_team_top10, on = 'Team')
+merged_data_teams = pd.merge(merged_data_teams, PER_team_mid5, on = 'Team')
+merged_data_teams = pd.merge(merged_data_teams, DRtg_team_top5, on = 'Team')
+merged_data_teams = pd.merge(merged_data_teams, DRtg_team_top10, on = 'Team')
+merged_data_teams = pd.merge(merged_data_teams, DRtg_team_mid5, on = 'Team')
+
+merged_data_teams.columns
+
+merged_data_teams.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/total_team_data.csv', index = False)
