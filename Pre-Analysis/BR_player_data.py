@@ -32,47 +32,4 @@ teams = ['Cleveland Cavaliers','Toronto Raptors', 'Washington Wizards', 'Boston 
 
 data_players['Team'] = data_players['Team'].replace(sort_names, teams)
 
-
-
-data_players.loc[data_players.MP < 45]
-
-
-
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-if data_players.loc[data_players['Player'] == 'Josh Richardson'] in test.any():
-    print('hola')
-else:
-    print('no')
-test = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')
-
-data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['Player']
-test
-
-list_teams = data_players['Team']
-list_players = data_players['Player']
-role = {}
-
-for i,x in zip(list_teams,list_players):
-    if
-    role['{}'.format(x)]  = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['PER'].sum()
-i = 'Miami Heat'
-
-data_players['Player'== 'Josh Richardson'] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['Player'].any()
-data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')
-data_players['Player'== 'Josh Richardson']['MIN']
-data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['Player']
-
-
-.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_players_data.csv', index=False)
+data_players.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_players_data.csv', index=False)

@@ -1,14 +1,14 @@
-Team,PER_top10,WIN%,Expected,Real
+Team,PER_top10,W/L%,Expected,Real
 Boston Celtics,159.89999999999998,0.598,1.0,4.0
 Milwaukee Bucks,157.5,0.732,2.0,1.0
 Philadelphia 76ers,154.7,0.622,3.0,3.0
-Charlotte Hornets,154.60000000000002,0.476,4.0,10.0
+Charlotte Hornets,154.60000000000002,0.47600000000000003,4.0,10.0
 Washington Wizards,153.8,0.39,5.0,11.0
 Toronto Raptors,153.7,0.7070000000000001,6.0,2.0
 Orlando Magic,150.6,0.512,7.0,7.0
 Indiana Pacers,149.79999999999998,0.585,8.0,5.0
-Miami Heat,148.6,0.476,9.0,10.0
-Cleveland Cavaliers,147.5,0.232,10.0,14.0
+Miami Heat,148.6,0.47600000000000003,9.0,10.0
+Cleveland Cavaliers,147.5,0.23199999999999998,10.0,14.0
 Atlanta Hawks,144.4,0.354,11.0,12.0
 Brooklyn Nets,136.1,0.512,12.0,7.0
 New York Knicks,135.60000000000002,0.207,13.0,15.0
