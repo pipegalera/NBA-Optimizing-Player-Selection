@@ -1,0 +1,11 @@
+Player,Team,ORtg,Position_C,Position_PF,Position_PG,Position_SF,Position_SG,role_FU,role_SU,DRtg,Salary 2018-19,decision
+Malcolm Brogdon,Milwaukee Bucks,121.0,0,0,0,0,1,1,0,108,1544951,1.0
+Ryan Arcidiacono,Chicago Bulls,121.0,0,0,1,0,0,1,0,115,1349383,1.0
+Thomas Bryant,Washington Wizards,130.0,1,0,0,0,0,1,0,112,1378242,1.0
+Maxi Kleber,Dallas Mavericks,115.0,0,1,0,0,0,1,0,109,1378242,1.0
+Monte Morris,Denver Nuggets,124.0,0,0,1,0,0,1,0,111,1349383,1.0
+Bruno Caboclo,Memphis Grizzlies,109.0,0,0,0,1,0,0,1,109,670211,1.0
+Wesley Matthews,Indiana Pacers,106.0,0,0,0,0,1,0,1,111,737715,1.0
+Mitchell Robinson,New York Knicks,140.0,1,0,0,0,0,0,1,106,1485440,1.0
+Danuel House,Houston Rockets,123.0,0,0,0,1,0,0,1,113,94003,1.0
+Gary Clark,Houston Rockets,108.0,0,1,0,0,0,0,1,110,596872,1.0

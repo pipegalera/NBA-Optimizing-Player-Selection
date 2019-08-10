@@ -1,0 +1,11 @@
+Player,Team,ORtg,Position_C,Position_PF,Position_PG,Position_SF,Position_SG,role_FU,role_SU,DRtg,Salary 2018-19,decision
+Rudy Gobert,Utah Jazz,133.0,1,0,0,0,0,1,0,100,23241573,1.0
+Giannis Antetokounmpo,Milwaukee Bucks,121.0,0,1,0,0,0,1,0,99,24157304,1.0
+Malcolm Brogdon,Milwaukee Bucks,121.0,0,0,0,0,1,1,0,108,1544951,1.0
+Monte Morris,Denver Nuggets,124.0,0,0,1,0,0,1,0,111,1349383,1.0
+Andre Iguodala,Golden State Warriors,124.0,0,0,0,1,0,1,0,109,16000000,1.0
+Dante Cunningham,San Antonio Spurs,121.0,0,1,0,0,0,0,1,111,2500000,1.0
+Tony Snell,Milwaukee Bucks,119.0,0,0,0,1,0,0,1,109,10607143,1.0
+Pat Connaughton,Milwaukee Bucks,122.0,0,0,0,0,1,0,1,107,1641000,1.0
+George Hill,Milwaukee Bucks,113.0,0,0,1,0,0,0,1,107,19000000,1.0
+Mitchell Robinson,New York Knicks,140.0,1,0,0,0,0,0,1,106,1485440,1.0
