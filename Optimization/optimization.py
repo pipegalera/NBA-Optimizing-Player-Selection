@@ -19,7 +19,7 @@ for i in list:
 
 players = data_players.iloc[:,list_n]
 
-players
+players.shape
 
 # Create Decision Variables: Every player
 vars = []
@@ -139,13 +139,13 @@ prob = pulp.LpProblem('Min_stats', pulp.LpMinimize) # Strategy: select players t
 prob += (b1*total_ORtg_top5 + b2*total_ORtg_mid5 + b3*total_DRtg_top5 + b4*total_DRtg_mid5)
 prob += (total_salary <= salary_cap)
 prob += (total_number == 10)
-prob += (total_FU == 5)
-prob += (total_centers == 2)
-prob += (total_powerforwards == 2)
-prob += (total_secondforwards == 2)
-prob += (total_pointguard == 2)
-prob += (total_secondguard == 2)
-
+prob += (total_FU <= 5)
+prob += (total_centers <= 2)
+prob += (total_powerforwards <= 2)
+prob += (total_secondforwards <= 2)
+prob += (total_pointguard <= 2)
+prob += (total_secondguard <= 2)
+'''
 # Strategy: Min salary to achive victory
 prob = pulp.LpProblem('Min_salary', pulp.LpMinimize)
 prob += (total_salary)
@@ -157,7 +157,7 @@ prob += (total_powerforwards == 2)
 prob += (total_secondforwards == 2)
 prob += (total_pointguard == 2)
 prob += (total_secondguard == 2)
-
+'''
 # Solution
 optimization_result = prob.solve()
 assert optimization_result == pulp.LpStatusOptimal
@@ -180,6 +180,8 @@ for rownum, row in df.iterrows():
 	df.loc[rownum, 'variable'] = int(value[0])
 
 df = df.sort_index(by='variable')
+players = players.drop('decision', axis = 1)
+
 for rownum, row in players.iterrows():
     for results_rownum, results_row in df.iterrows():
         if rownum == results_row['variable']:
@@ -187,7 +189,7 @@ for rownum, row in players.iterrows():
 
 
 players.decision.sum()
-
+players.loc[(players.decision == 1)]
 # players.loc[players.decision == 1].to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Optimization/Team_minvictories_tochamp.csv', index = False)
 # players.loc[players.decision == 1].to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Optimization/Team_undercap_minvictories.csv', index = False)
 # players.loc[players.decision == 1].to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Optimization/Team_undercap_maxvictories.csv', index = False)
@@ -208,7 +210,6 @@ win = b0 + b1*sum_ORtg_top5 + b2*sum_ORtg_mid5 + b3*sum_DRtg_top5 + b4*sum_DRtg_
 win
 min_victories_to_champ = 0.7598130494939783
 
-players = players.drop('decision', axis = 1)
 
 '''
 test = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/total_team_data.csv')

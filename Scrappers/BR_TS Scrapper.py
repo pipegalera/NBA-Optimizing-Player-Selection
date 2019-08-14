@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 url_list = []
-year = [2019]
+year = 2019
 for i in year: # year = range(2012,2019) for more years
         url = "https://www.basketball-reference.com/leagues/NBA_{year}_ratings.html".format(year = i)
         url_list.append(url)

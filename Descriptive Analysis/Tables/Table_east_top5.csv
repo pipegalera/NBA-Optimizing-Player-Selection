@@ -1,4 +1,4 @@
-Team,PER_top5,WIN%,Expected,Real
+Team,PER_top5,W/L%,Expected,Real
 Milwaukee Bucks,99.1,0.732,1.0,1.0
 Philadelphia 76ers,94.4,0.622,2.0,3.0
 Toronto Raptors,92.7,0.7070000000000001,3.0,2.0
@@ -7,10 +7,10 @@ Orlando Magic,84.0,0.512,5.0,7.0
 Washington Wizards,82.5,0.39,6.0,11.0
 Brooklyn Nets,79.8,0.512,7.0,7.0
 Indiana Pacers,78.0,0.585,8.0,5.0
-Cleveland Cavaliers,77.3,0.232,9.0,14.0
+Cleveland Cavaliers,77.3,0.23199999999999998,9.0,14.0
 Detroit Pistons,77.2,0.5,10.0,8.0
-Charlotte Hornets,76.60000000000001,0.476,11.0,10.0
+Charlotte Hornets,76.60000000000001,0.47600000000000003,11.0,10.0
 Chicago Bulls,75.7,0.268,12.0,13.0
-Miami Heat,74.9,0.476,13.0,10.0
+Miami Heat,74.9,0.47600000000000003,13.0,10.0
 Atlanta Hawks,71.60000000000001,0.354,14.0,12.0
 New York Knicks,60.2,0.207,15.0,15.0

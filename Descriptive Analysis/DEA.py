@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib as plt
 from matplotlib.pyplot import style
 
-
 data_players = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_players_data.csv')
 data_teams = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_TS.csv')
 
@@ -18,12 +17,20 @@ n_players
 # All players PER summed grouped by Team (include residual players)
 PER_team = data_players['PER'].groupby(data_players['Team']).sum()
 PER_team = pd.DataFrame(PER_team).sort_values(by = 'PER', ascending = False).reset_index()
+
 PER_team
 
 #Win rate by teams
 winrate = data_teams['W/L%'].groupby(data_teams['Team']).sum()
 winrate = pd.DataFrame(winrate).sort_values(by = 'W/L%', ascending = False).reset_index()
-winrate
+
+Table_1 = pd.merge(PER_team, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
+Table_1['Expected Rank'] = Table_1['PER'].rank(method = 'max', ascending = False)
+Table_1['Real Rank'] = Table_1['W/L%'].rank(method = 'max', ascending = False)
+Table_1
+Table_1['PER'].corr(Table_1['W/L%'])
+Table_1.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_1.csv', index = False)
+
 
 # PER of the 5 and 10 most used Players, and 5 middle used players, by team
 # Offensive and Defensive Rating of the 5 and 10 most used Players, and 5 middle used players, by team
@@ -34,6 +41,8 @@ east = ['Cleveland Cavaliers','Toronto Raptors', 'Washington Wizards', 'Boston C
 west = ['Dallas Mavericks', 'Denver Nuggets', 'Golden State Warriors', 'Houston Rockets', 'Los Angeles Clippers',
 'Los Angeles Lakers', 'Memphis Grizzlies', 'Minnesota Timberwolves', 'New Orleans Pelicans', 'Oklahoma City Thunder',
 'Phoenix Suns', 'Portland Trail Blazers', 'Sacramento Kings', 'San Antonio Spurs', 'Utah Jazz']
+east_west = east + west
+east_west
 east_per_top5 = {}
 west_per_top5 = {}
 east_per_top10 = {}
@@ -53,7 +62,48 @@ west_ortg_top10 = {}
 east_ortg_mid5 = {}
 west_ortg_mid5 = {}
 
-# data_players.loc[data_players['Team'] == '{}'.format('Cleveland Cavaliers')].nlargest(5,'MP')['DRtg'].sum()
+#Calculating minutes played
+min_top5 = {}
+min_top10 = {}
+min_mid5 = {}
+min_rest = {}
+for i in east_west:
+    min_top5['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(5,'MP')['MP'].sum()
+    min_top10['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['MP'].sum()
+    min_mid5['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10,'MP')['MP'].drop(data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10, 'MP')['MP'].index[:5]).sum()
+    min_rest['{}'.format(i)] = data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(20,'MP')['MP'].drop(data_players.loc[data_players['Team'] == '{}'.format(i)].nlargest(10, 'MP')['MP'].index[:10]).sum()
+
+
+min_top5 = pd.DataFrame.from_dict(min_top5, orient = 'index').stack().reset_index(level=0)
+min_top5 = min_top5.rename(columns = {'level_0': 'Team', 0: 'MP Top 5'}).reset_index(drop = True)
+
+min_mid5 = pd.DataFrame.from_dict(min_mid5, orient = 'index').stack().reset_index(level=0)
+min_mid5 = min_mid5.rename(columns = {'level_0': 'Team', 0: 'MP Mid 5'}).reset_index(drop = True)
+
+min_top10 = pd.DataFrame.from_dict(min_top10, orient = 'index').stack().reset_index(level=0)
+min_top10 = min_top10.rename(columns = {'level_0': 'Team', 0: 'MP Top 10'}).reset_index(drop = True)
+
+min_rest = pd.DataFrame.from_dict(min_rest, orient = 'index').stack().reset_index(level=0)
+min_rest = min_rest.rename(columns = {'level_0': 'Team', 0: 'MP Rest'}).reset_index(drop = True)
+
+merged_minutes = pd.merge(min_top5, min_mid5, on = 'Team')
+merged_minutes = pd.merge(merged_minutes, min_top10, on = 'Team')
+merged_minutes = pd.merge(merged_minutes, min_rest, on = 'Team')
+merged_minutes.round(2).to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_3.csv', index = False)
+merged_minutes
+for i in merged_minutes:
+    merged_minutes['% Time playing Top 5'] = merged_minutes['MP Top 5'] / (merged_minutes['MP Top 10'] + merged_minutes['MP Rest'])
+    merged_minutes['% Time playing Mid 5'] = merged_minutes['MP Mid 5'] / (merged_minutes['MP Top 10'] + merged_minutes['MP Rest'])
+    merged_minutes['% Time playing Top 10'] = merged_minutes['MP Top 10'] / (merged_minutes['MP Top 10'] + merged_minutes['MP Rest'])
+    merged_minutes['% Time playing the rest'] = merged_minutes['MP Rest'] / (merged_minutes['MP Top 10'] + merged_minutes['MP Rest'])
+merged_minutes
+merged_minutes = merged_minutes.drop(columns =['MP Top 5', 'MP Mid 5', 'MP Top 10', 'MP Rest'])
+merged_minutes.round(2).to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_3.csv', index = False)
+
+merged_minutes['% Time playing Top 5'].mean()
+merged_minutes['% Time playing Mid 5'].mean()
+merged_minutes['% Time playing Top 10'].mean()
+merged_minutes['% Time playing the rest'].mean()
 
 for i,x in zip(east, west):
     #PER top 5
@@ -87,7 +137,6 @@ for i,x in zip(east, west):
     west_drtg_mid5['{}'.format(x)] = data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10,'MP')['DRtg'].drop(data_players.loc[data_players['Team'] == '{}'.format(x)].nlargest(10, 'MP')['DRtg'].index[:5]).sum()
 
 
-east_ortg_top5
 # PER dicts to Dataframe
 east_per_top5 = pd.DataFrame.from_dict(east_per_top5, orient = 'index').stack().reset_index(level=0)
 east_per_top5 = east_per_top5.rename(columns = {'level_0': 'Team', 0: 'PER_top5'}).reset_index(drop = True)
@@ -172,6 +221,17 @@ Table_east_top10 = pd.merge(east_per_top10, winrate, on = 'Team').sort_values(by
 Table_east_top10['Expected'] = Table_east_top10['PER_top10'].rank(method = 'max', ascending = False)
 Table_east_top10['Real'] = Table_east_top10['W/L%'].rank(method = 'max', ascending = False)
 
+Table_2 = pd.merge(east_per_top10, east_per_top5, on = 'Team').sort_values(by = ['PER_top10'], ascending = False)
+Table_2 = pd.merge(Table_2, winrate, on = 'Team').sort_values(by = ['W/L%'], ascending = False)
+Table_2['Expected Rank Top 5 PER'] = Table_2['PER_top5'].rank(method = 'max', ascending = False)
+Table_2['Expected Rank Top 10 PER'] = Table_2['PER_top10'].rank(method = 'max', ascending = False)
+Table_2['Real Rank'] = Table_2['W/L%'].rank(method = 'max', ascending = False)
+Table_2.columns
+Table_2 = Table_2[['Team', 'W/L%', 'Real Rank', 'Expected Rank Top 5 PER', 'Expected Rank Top 10 PER' ]]
+Table_2['Real Rank'].corr(Table_2['Expected Rank Top 5 PER'])
+Table_2['Real Rank'].corr(Table_2['Expected Rank Top 10 PER'])
+Table_2.round(2).to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_2.csv', index = False)
+
 Table_east_top10.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Descriptive Analysis/Tables/Table_east_top10.csv', index = False)
 Table_east_top10['PER_top10'].corr(Table_east_top10['W/L%'])
 
@@ -224,3 +284,20 @@ merged_data_teams = pd.merge(merged_data_teams, DRtg_team_mid5, on = 'Team')
 merged_data_teams.columns
 
 merged_data_teams.to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/total_team_data.csv', index = False)
+merged_data_teams = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/total_team_data.csv')
+merged_data_teams
+
+# Feature Selection
+
+features_sel = merged_data_teams.drop(columns = 'Team')
+dummies = pd.get_dummies(features_sel[['Conf', 'Div']])
+features_sel = pd.concat([features_sel, dummies], axis = 1)
+features_sel
+
+# Correlation Matrix
+
+corr = features_sel.corr(method = 'pearson')
+corr = corr.round(2).style.background_gradient(cmap = 'coolwarm')
+corr
+
+features_sel
