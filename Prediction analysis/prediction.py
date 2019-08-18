@@ -94,7 +94,6 @@ list = ['ORtg_top5', 'ORtg_mid5', 'DRtg_top5', 'DRtg_mid5']
 list_n = []
 for i in list:
      list_n.append(df.columns.get_loc('{}'.format(i)))
-
 y_3 = df.iloc[:,1].values
 X_3 = df.iloc[:,list_n].values
 X_train, X_test, y_train, y_test = train_test_split(X_3, y_3, test_size = 0.3, random_state = 42)
@@ -153,7 +152,7 @@ reg.fit(X_train, y_train)
 y_pred_reg = reg.predict(X_test)
 reg_score = reg.score(X_test, y_test)
 reg_score #0.92
-r2_score(y_pred_reg, y_test) #0.90
+r2_score(y_pred_reg, y_test) #0.89
 reg.intercept_
 reg.coef_[0]
 reg.coef_[1]

@@ -55,8 +55,8 @@ stats['Player'].loc[565] == adv_stats['Player'].loc[565]
 merge = pd.merge(stats, adv_stats, on = 'Player')
 merge = merge[merge['Team_x'] == merge['Team_y']].reset_index(drop = True)
 merge.shape
-
-
+merge.loc[merge.Team_x == 'IND'][['Player', 'MP']]
+merge
 ###################################
 #  Salaries                       #
 ###################################
