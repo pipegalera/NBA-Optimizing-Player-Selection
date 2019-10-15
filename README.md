@@ -9,3 +9,7 @@ The project applies:
 * Descriptive analysis visualization with Seaborn.
 * Modeling with Scikit-learn.
 * Optimization with PuLP.
+
+More at https://github.com/pipegalera/Optimizing-NBA-Player-Selection/blob/master/Optimizing-NBA-Player-Selection.pdf
+
+All the code and datasets created are available in this repository. 
