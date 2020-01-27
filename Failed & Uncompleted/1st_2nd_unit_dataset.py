@@ -3,7 +3,7 @@ I cannot merge NBA.com stats with Basketball Reference STATS
 because:
         1) They count the minutes played differently.
         2) NBA do not differentiate the stats of one player
-        that playing for different teams.
+           playing for different teams.
 '''
 
 import pandas as pd
