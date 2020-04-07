@@ -13,30 +13,40 @@ import numpy as np
 import os
 os.chdir("/Users/fgm.si/Documents/GitHub/Optimizing-NBA-Player-Selection")
 
+###############################################################################
+#                            PLAYERS DATA                                     #
+###############################################################################
 
-###################################
-#   Basketball reference data     #
-###################################
+####################################
+#   Player Advanced Statistics     #
+####################################
 
-# Advanced Statistics
 
+
+# Take a list of all the url needed
 url_list = []
 year = range(2001,2021)
-
 for i in year:
     url = "https://www.basketball-reference.com/leagues/NBA_{}_advanced.html".format(i)
     url_list.append(url)
 
+# Compile the body
+adv_stats = pd.DataFrame()
 url_list
+for u in url_list:
+    html = urlopen(u)
+    soup = BeautifulSoup(html)
+# Getting the body
+    rows = soup.findAll('tr')[1:]
+    stats = [[i.getText() for i in rows[x].findAll('td')]
+            for x in range(len(rows))]
+    stats = pd.DataFrame(stats)
+    stats["28"] = pd.to_numeric(u[49:53])
+    adv_stats = adv_stats.append(stats).dropna()
 
-# Opening up connection, grabbing the page
-html = urlopen(url)
-soup = BeautifulSoup(html)
 
-'''
-To know what to specifically look for you should inspect the webpage. For
-example, in this "soup" the headers of the dataset are within the class "tr"
-'''
+# Clean the body
+adv_stats = adv_stats.drop([18, 23], axis = 1)
 
 # Getting headers and removing incorrect named columns
 headers_files = soup.findAll('tr')[0]
@@ -45,54 +55,68 @@ headers.remove('\xa0')
 headers.remove('\xa0')
 headers.remove('Rk')
 headers = ['Team' if x == 'Tm' else x for x in headers]
-
-
-# Getting the body
-rows = soup.findAll('tr')[1:]
-stats = [[i.getText() for i in rows[x].findAll('td')]
-            for x in range(len(rows))]
-adv_stats = pd.DataFrame(stats).dropna()
-
-adv_stats = adv_stats.drop([18, 23], axis = 1)
+headers.append("Year")
+# Check columns length
+len(headers) == len(adv_stats.columns)
 adv_stats.columns = headers
-adv_stats
 
-#  Statistics per 100 posessions  #
+# Save advanced data
+adv_stats = adv_stats.reset_index(drop = True)
+adv_stats.to_csv("out_data/all_years_players_data.csv", index = False)
 
 
+####################################
+#  Statistics per 100 posessions   #
+####################################
+
+
+url_list = []
 for i in year:
     url = 'https://www.basketball-reference.com/leagues/NBA_{}_per_poss.html'.format(i)
     url_list.append(url)
 
+regular_stats = pd.DataFrame()
+for u in url_list:
+
+    # Getting headers and removing incorrect named columns
+    html = urlopen(u)
+    soup = BeautifulSoup(html)
+
+    # Getting the body
+    rows = soup.findAll('tr')[1:]
+    stats = [[i.getText() for i in rows[x].findAll('td')]
+            for x in range(len(rows))]
+    stats = pd.DataFrame(stats)
+    stats["28"] = pd.to_numeric(u[49:53])
+    regular_stats = regular_stats.append(stats).dropna()
+
 # Getting headers and removing incorrect named columns
-html = urlopen(url)
-soup = BeautifulSoup(html)
 headers_files = soup.findAll('tr')[0]
 headers = [i.getText() for i in headers_files.findAll('th')]
 headers.remove('Rk')
 headers = ['Team' if x == 'Tm' else x for x in headers]
+headers.append("Year")
 
-# Getting the body
-rows = soup.findAll('tr')[1:]
-stats = [[i.getText() for i in rows[x].findAll('td')]
-            for x in range(len(rows))]
-stats = pd.DataFrame(stats).dropna()
+# Check columns length
+len(headers) == len(regular_stats.columns)
+regular_stats.columns = headers
+regular_stats = regular_stats.drop(columns = ['', 'Age', 'G', 'MP'],axis = 1)
+regular_stats = regular_stats.reset_index(drop = True)
 
-stats.columns = headers
-stats = stats.drop(columns = ['', 'Age', 'G', 'MP'],axis = 1)
+regular_stats
 
-"""
-Test: The following boolean should be True before merging:
-stats['Player'].loc[565] == adv_stats['Player'].loc[565]
-Try other numbers
-"""
-stats
-all_stats = pd.merge(stats, adv_stats, on = ["Player", "Team", "Pos"])
-all_stats.shape
+# Merge datasets
+all_stats = pd.merge(adv_stats, regular_stats, on = ["Player", "Team", "Pos", "Year"])
+all_stats.columns
+
+# Save dataset
+all_stats.to_csv("out_data/all_years_players_data_v2.csv", index = False)
+all_stats.to_csv("out_data/all_years_players_data_v2", index = False)
 
 ###################################
 #  Salaries                       #
 ###################################
+
 """
 DISCLAIMER: Basketball reference update the webpage of contracts, so I have used the archive of the webpage
 """
@@ -135,9 +159,14 @@ salaries.loc[salaries.Player == "Dwight Howard"]
 #  Merging Salaries with all the stats  #
 #########################################
 
-salaries
-data_players = pd.merge(all_stats, salaries, on = ['Player', 'Team'])
-data_players.reset_index(drop = True, inplace = True)
+# Lets keep only the data of the 2020 season for the current analysis aim
+all_stats  = all_stats[all_stats["Year"] == 2020].drop("Year", axis = 1).reset_index(drop = True)
+
+# Check if right:
+all_stats[all_stats["Team"] == "BOS"]
+salaries[salaries["Team"] == "BOS"]
+
+data_players = pd.merge(all_stats, salaries, on = ['Player', 'Team', ]).reset_index(drop = True)
 data_players
 
 #########################
@@ -217,7 +246,9 @@ data_players.to_csv('out_data/players_data.csv', index = False)
 ###############################################################################
 ###############################################################################
 
-# Team Datasets
+###############################################################################
+#                        TEAM'S STATISTICS                                    #
+###############################################################################
 
 url_list = []
 year = range(2012,2021)

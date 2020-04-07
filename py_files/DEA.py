@@ -1,11 +1,20 @@
+# @Author: Pipe galera
+# @Date:   07-04-2020
+# @Email:  pipegalera@gmail.com
+# @Last modified by:   Pipe galera
+# @Last modified time: 07-04-2020
 
+# Packages
 import pandas as pd
 import numpy as np
 import matplotlib as plt
 from matplotlib.pyplot import style
+import os
 
-data_players = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_players_data.csv')
-data_teams = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_TS.csv')
+# Read Datasets
+os.chdir("C:/Users/fgm.si/Documents/GitHub/Optimizing-NBA-Player-Selection/")
+data_players = pd.read_csv("out_data/players_data.csv")
+data_teams = pd.read_csv('out_data/team_data.csv')
 
 # Count number of players
 sum_players = data_players['Player'].count()
@@ -18,12 +27,12 @@ n_players
 PER_team = data_players['PER'].groupby(data_players['Team']).sum()
 PER_team = pd.DataFrame(PER_team).sort_values(by = 'PER', ascending = False).reset_index()
 
-PER_team
+data_players['PER'].groupby(data_players['Team']).sum()
 
 #Win rate by teams
 winrate = data_teams['W/L%'].groupby(data_teams['Team']).sum()
 winrate = pd.DataFrame(winrate).sort_values(by = 'W/L%', ascending = False).reset_index()
-
+winrate
 Table_1 = pd.merge(PER_team, winrate, on = 'Team').sort_values(by = ['PER'], ascending = False)
 Table_1['Expected Rank'] = Table_1['PER'].rank(method = 'max', ascending = False)
 Table_1['Real Rank'] = Table_1['W/L%'].rank(method = 'max', ascending = False)
