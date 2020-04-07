@@ -2,24 +2,17 @@
 # @Date:   05-04-2020
 # @Email:  pipegalera@gmail.com
 # @Last modified by:   Pipe galera
-# @Last modified time: 06-04-2020
+# @Last modified time: 07-04-2020
 
 
-
-"""
-title: "NBA Scrapers"
-author: "Pipe Galera"
-Last data: "27/01/2020"
-"""
-
-
+# Packages
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 import os
 os.chdir("/Users/fgm.si/Documents/GitHub/Optimizing-NBA-Player-Selection")
-# Scraping the Datasets
+
 
 ###################################
 #   Basketball reference data     #
@@ -220,3 +213,40 @@ data_players.loc[data_players['Team'] == '{}'.format('Miami Heat')].nlargest(20,
 
 data_players = pd.concat([fu,su, tu])
 data_players.to_csv('out_data/players_data.csv', index = False)
+
+###############################################################################
+###############################################################################
+
+# Team Datasets
+
+url_list = []
+year = range(2012,2021)
+for i in year: # year = range(2012,x) for more years
+        url = "https://www.basketball-reference.com/leagues/NBA_{year}_ratings.html".format(year = i)
+        url_list.append(url)
+
+url_list
+team_data = pd.DataFrame()
+for i in url_list:
+    # Opening up connection, grabbing the page
+    html = urlopen(url)
+    soup = BeautifulSoup(html)
+    # Getting headers and removing incorrect column
+    headers_files = soup.findAll('tr')[1]
+    headers = [i.getText() for i in headers_files.findAll('th')]
+    headers.remove('Rk')
+    # Getting the body
+    rows = soup.findAll('tr')[1:]
+    stats = [[i.getText() for i in rows[x].findAll('td')]
+            for x in range(len(rows))]
+    team_data = team_data.append(stats).dropna()
+
+# Check if it got all the rows:
+len(url_list) * 30 == team_data.shape[0]
+
+team_data.columns = headers
+team_data = team_data.drop(columns = ['W', 'L'])
+team_data.reset_index(drop = True)
+
+# Save data
+team_data.to_csv('out_data/teams_data.csv', index = False
