@@ -2,7 +2,7 @@
 # @Date:   05-04-2020
 # @Email:  pipegalera@gmail.com
 # @Last modified by:   Pipe galera
-# @Last modified time: 07-04-2020
+# @Last modified time: 08-04-2020
 
 
 # Packages
@@ -21,11 +21,11 @@ os.chdir("/Users/fgm.si/Documents/GitHub/Optimizing-NBA-Player-Selection")
 #   Player Advanced Statistics     #
 ####################################
 
-
-
 # Take a list of all the url needed
+
 url_list = []
-year = range(2001,2021)
+# For more years: year = range(2001,2021)
+year = ['2020']
 for i in year:
     url = "https://www.basketball-reference.com/leagues/NBA_{}_advanced.html".format(i)
     url_list.append(url)
@@ -60,9 +60,7 @@ headers.append("Year")
 len(headers) == len(adv_stats.columns)
 adv_stats.columns = headers
 
-# Save advanced data
 adv_stats = adv_stats.reset_index(drop = True)
-adv_stats.to_csv("out_data/all_years_players_data.csv", index = False)
 
 
 ####################################
@@ -102,7 +100,6 @@ len(headers) == len(regular_stats.columns)
 regular_stats.columns = headers
 regular_stats = regular_stats.drop(columns = ['', 'Age', 'G', 'MP'],axis = 1)
 regular_stats = regular_stats.reset_index(drop = True)
-
 regular_stats
 
 # Merge datasets
@@ -110,8 +107,7 @@ all_stats = pd.merge(adv_stats, regular_stats, on = ["Player", "Team", "Pos", "Y
 all_stats.columns
 
 # Save dataset
-all_stats.to_csv("out_data/all_years_players_data_v2.csv", index = False)
-all_stats.to_csv("out_data/all_years_players_data_v2", index = False)
+all_stats.to_csv("out_data/players_data.csv", index = False)
 
 ###################################
 #  Salaries                       #
@@ -120,6 +116,7 @@ all_stats.to_csv("out_data/all_years_players_data_v2", index = False)
 """
 DISCLAIMER: Basketball reference update the webpage of contracts, so I have used the archive of the webpage
 """
+
 # Getting headers and removing incorrect named columns
 url = "https://web.archive.org/web/20200229105705/https://www.basketball-reference.com/contracts/players.html"
 html = urlopen(url)
@@ -131,21 +128,19 @@ rows = soup.findAll('tr')[1:]
 salaries = [[td.getText() for td in rows[i].findAll('td')]
             for i in range(len(rows))]
 salaries = pd.DataFrame(salaries, columns = headers).dropna()
+
+
+# Cleanning the format
 salaries = salaries.apply(lambda x: x.str.replace('$', ''))
 salaries = salaries.apply(lambda x: x.str.replace(',', ''))
+salaries.replace('', 0, inplace = True)
+salaries['Signed Using'].replace(0, np.nan, inplace = True)
 
-
-# Cleaning missing data
 salaries_list = ['Salary 2019-20', 'Salary 2020-21', 'Salary 2021-22', 'Salary 2022-23', 'Salary 2023-24', 'Salary 2023-2024', 'Guaranteed']
 
 for i in salaries_list:
     salaries[i] = salaries[i].replace('', 0)
-salaries['Signed Using'] = salaries['Signed Using'].replace('', 'NaN')
-
-# Changing the type from objects to integers
-salaries.dtypes
-for i in salaries_list:
-    salaries[i] = salaries[i].astype('int')
+    salaries[i] = salaries[i].apply(pd.to_numeric)
 
 """
 Agregating the contracts within the same team.
@@ -159,7 +154,6 @@ salaries.loc[salaries.Player == "Dwight Howard"]
 #  Merging Salaries with all the stats  #
 #########################################
 
-# Lets keep only the data of the 2020 season for the current analysis aim
 all_stats  = all_stats[all_stats["Year"] == 2020].drop("Year", axis = 1).reset_index(drop = True)
 
 # Check if right:
@@ -174,7 +168,6 @@ data_players
 #########################
 
 # Creating a dictionary to map the name of the teams
-
 teams_dict = {
 'CLE': 'Cleveland Cavaliers',
 'TOR': 'Toronto Raptors',
@@ -208,39 +201,38 @@ teams_dict = {
 'UTA': 'Utah Jazz'
 }
 
-
+# Mapping teams
 data_players['Team'] = data_players['Team'].map(teams_dict)
 data_players
 data_players.columns
 
 # Clearning data types
-
 data_players.dtypes
-data_players.iloc[:,3:-5] = data_players.iloc[:,3:-5].apply(pd.to_numeric)
+data_players.iloc[:,4:-2] = data_players.iloc[:,4:-2].apply(pd.to_numeric)
 data_players.dtypes
 
 #############################################################
 #  Creating columns for first, second unit, and third unit  #
 #############################################################
 
+
 fu = pd.DataFrame(columns= data_players.columns, dtype = "float64")
 su = pd.DataFrame(columns= data_players.columns, dtype = "float64")
 tu = pd.DataFrame(columns= data_players.columns, dtype = "float64")
 
 for key, value in teams_dict.items():
-    fu = fu.append(data_players.loc[data_players['Team'] == '{}'.format(value)].nlargest(5,'MP'))
-    su = su.append(data_players.loc[data_players['Team'] == '{}'.format(value)].nlargest(10, 'MP')[5:])
-    tu = tu.append(data_players.loc[data_players['Team'] == '{}'.format(value)].nlargest(20, 'MP')[11:])
+    fu = fu.append(data_players.loc[data_players['Team'] == value].nlargest(5,'MP'))
+    su = su.append(data_players.loc[data_players['Team'] == value].nlargest(10, 'MP')[5:])
+    tu = tu.append(data_players.loc[data_players['Team'] == value].nlargest(20, 'MP')[10:])
 
 fu["Role"] = "First Unit"
 su["Role"] = "Second Unit"
 tu["Role"] = "Third Unit"
+data_players = pd.concat([fu,su, tu])
 
 # Check
 data_players.loc[data_players['Team'] == '{}'.format('Miami Heat')].nlargest(20,'MP')[["Player", "MP", "Role"]]
 
-
-data_players = pd.concat([fu,su, tu])
 data_players.to_csv('out_data/players_data.csv', index = False)
 
 ###############################################################################
@@ -251,7 +243,6 @@ data_players.to_csv('out_data/players_data.csv', index = False)
 ###############################################################################
 
 url_list = []
-year = range(2012,2021)
 for i in year: # year = range(2012,x) for more years
         url = "https://www.basketball-reference.com/leagues/NBA_{year}_ratings.html".format(year = i)
         url_list.append(url)
@@ -279,5 +270,47 @@ team_data.columns = headers
 team_data = team_data.drop(columns = ['W', 'L'])
 team_data.reset_index(drop = True)
 
+#########################
+#  Tidying the dataset  #
+#########################
+
+# Creating a dictionary to map the conferences of the teams
+
+conferences_dict = {
+# East
+'Cleveland Cavaliers': "East",
+'Toronto Raptors': "East",
+'Washington Wizards': "East",
+'Boston Celtics': "East",
+'Chicago Bulls': "East",
+'Miami Heat': "East",
+'Indiana Pacers': "East",
+'Brooklyn Nets': "East",
+'Charlotte Hornets': "East",
+'Orlando Magic': "East",
+'New York Knicks': "East",
+'Milwaukee Bucks': "East",
+'Atlanta Hawks': "East",
+'Detroit Pistons': "East",
+'Philadelphia 76ers': "East",
+# West
+'Dallas Mavericks': "West",
+'Denver Nuggets': "West",
+'Golden State Warriors': "West",
+'Houston Rockets': "West",
+'Los Angeles Clippers': "West",
+'Los Angeles Lakers': "West",
+'Memphis Grizzlies': "West",
+'Minnesota Timberwolves': "West",
+'New Orleans Pelicans': "West",
+'Oklahoma City Thunder': "West",
+'Phoenix Suns': "West",
+'Portland Trail Blazers': "West",
+'Sacramento Kings': "West",
+'San Antonio Spurs': "West",
+'Utah Jazz': "West"
+}
+team_data['Conference'] = team_data['Team'].map(conferences_dict)
+team_data
 # Save data
-team_data.to_csv('out_data/teams_data.csv', index = False
+team_data.to_csv('out_data/team_data.csv', index = False)
