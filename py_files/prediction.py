@@ -1,3 +1,9 @@
+# @Author: pipegalera
+# @Date:   2020-04-08T18:30:21+02:00
+# @Last modified by:   pipegalera
+# @Last modified time: 2020-04-08T21:42:03+02:00
+
+
 
 import pandas as pd
 import numpy as np

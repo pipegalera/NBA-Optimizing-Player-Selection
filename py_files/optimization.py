@@ -1,25 +1,32 @@
+# @Author: pipegalera
+# @Date:   2020-04-08T18:30:21+02:00
+# @Last modified by:   pipegalera
+# @Last modified time: 2020-04-08T21:42:29+02:00
+"""
+Check first prediction
+"""
+
+# Packages
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pulp import *
 import re
+import os
 
-data_players = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/BR_players_data_optimization.csv')
+# Read data
+os.chdir("/Users/pipegalera/Documents/GitHub/Optimizing-NBA-Player-Selection")
+data_players = pd.read_csv("out_data/players_data.csv")
+
 
 # Preparing of the dataset
-dummies = pd.get_dummies(data_players[['Position', 'role']])
-data_players = pd.concat([data_players, dummies], axis = 1).drop('Position', axis = 1)
+dummies = pd.get_dummies(data_players[['Pos', 'Role']])
+data_players = pd.concat([data_players, dummies], axis = 1).drop(columns = ['Pos', 'Role'])
+data_players.columns
 
 # Prepare data
-data_players[['ORtg', 'DRtg']] = data_players[['ORtg', 'DRtg']].apply(pd.to_numeric)
-list = ['Player','Team','ORtg','Position_C','Position_PF','Position_PG','Position_SF','Position_SG','role_FU','role_SU','DRtg', 'Salary 2018-19']
-list_n = []
-for i in list:
-     list_n.append(data_players.columns.get_loc('{}'.format(i)))
-
-players = data_players.iloc[:,list_n]
-
-players.shape
+players = data_players[['Player','Team','ORtg','DRtg','Pos_C','Pos_PF','Pos_PG','Pos_SF','Pos_SG','Role_First Unit','Role_Second Unit', 'Salary 2019-20']]
+players
 
 # Create Decision Variables: Every player
 vars = []
@@ -28,44 +35,45 @@ for rownum, row in players.iterrows(): #For every row create a decision variable
     var = pulp.LpVariable(str(var), lowBound = 0, upBound = 1, cat= 'Integer') # Decision problem is binary(0,1)
     vars.append(var)
 
+
 # Defining the Optimization problem
 total_ORtg_top5 = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['ORtg']* row['role_FU'] * schedule
+            formula = row['ORtg']* row['Role_First Unit'] * schedule
             total_ORtg_top5 += formula
 
 total_ORtg_mid5 = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['ORtg']* row['role_SU'] * schedule
+            formula = row['ORtg']* row['Role_Second Unit'] * schedule
             total_ORtg_mid5 += formula
 
 total_DRtg_top5 = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['DRtg']* row['role_FU'] * schedule
+            formula = row['DRtg']* row['Role_First Unit'] * schedule
             total_DRtg_top5 += formula
 
 total_DRtg_mid5 = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['DRtg']* row['role_SU'] * schedule
+            formula = row['DRtg']* row['Role_Second Unit'] * schedule
             total_DRtg_mid5 += formula
 
 # Definning the Constrains:
 
 # Salary
-salary_cap = 101900000
+salary_cap = 109140000
 total_salary = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['Salary 2018-19']* schedule
+            formula = row['Salary 2019-20']* schedule
             total_salary += formula
 
 # Team number
@@ -81,7 +89,7 @@ total_centers = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['Position_C'] * schedule
+            formula = row['Pos_C'] * schedule
             total_centers += formula
 total_centers
 
@@ -89,7 +97,7 @@ total_powerforwards = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['Position_PF']* schedule
+            formula = row['Pos_PF']* schedule
             total_powerforwards += formula
 total_powerforwards
 
@@ -97,7 +105,7 @@ total_secondforwards = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['Position_SF']* schedule
+            formula = row['Pos_SF']* schedule
             total_secondforwards += formula
 total_secondforwards
 
@@ -105,7 +113,7 @@ total_pointguard = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['Position_PG']* schedule
+            formula = row['Pos_PG']* schedule
             total_pointguard += formula
 total_pointguard
 
@@ -113,7 +121,7 @@ total_secondguard = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['Position_SG']* schedule
+            formula = row['Pos_SG']* schedule
             total_secondguard += formula
 total_secondguard
 
@@ -122,7 +130,7 @@ total_FU = ""
 for rownum, row in players.iterrows():
     for i, schedule in enumerate(vars):
         if rownum == i:
-            formula = row['role_FU']* schedule
+            formula = row['Role_First Unit']* schedule
             total_FU += formula
 
 
@@ -132,6 +140,7 @@ b1 = 0.0037166217829991037
 b2 = 0.0020560957574373394
 b3 = -0.0028170246210830825
 b4 = -0.0026370430520007366
+
 # Log Regression:
 b0 = 0.5831503704167519
 b1 = 0.0008637930249106345
@@ -140,9 +149,9 @@ b3 = -0.0006509347508675623
 b4 = -0.0006390153931907102
 
 # Strategy: Max or min win rate
-'''
+LpSolverDefault.msg = 1
 prob = pulp.LpProblem('Max_stats', pulp.LpMaximize) # Strategy: select players that max stats
-prob = pulp.LpProblem('Min_stats', pulp.LpMinimize) # Strategy: select players that min stats
+#prob = pulp.LpProblem('Min_stats', pulp.LpMinimize) # Strategy: select players that min stats
 prob += (b0 + b1*total_ORtg_top5 + b2*total_ORtg_mid5 + b3*total_DRtg_top5 + b4*total_DRtg_mid5)
 prob += (total_salary <= salary_cap)
 prob += (total_number == 10)
@@ -164,9 +173,14 @@ prob += (total_powerforwards == 2)
 prob += (total_secondforwards == 2)
 prob += (total_pointguard == 2)
 prob += (total_secondguard == 2)
-'''
+
+
 # Solution
-optimization_result = prob.solve()
+"""
+You need to install  the glpk-utils to work (In linux/Mac: conda install -c conda-forge glpk)
+"""
+pulp.pulpTestAll()
+optimization_result = prob.solve(PULP_CBC_CMD())
 assert optimization_result == pulp.LpStatusOptimal
 LpStatus[prob.status]
 for i in prob.variables():
@@ -203,15 +217,15 @@ players.loc[(players.decision == 1)]
 # players.loc[players.decision == 1].to_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Optimization/Team_undercap_maxvictories.csv', index = False)
 
 # Win prediction
-np.mean(players.loc[(players.decision == 1) & (players.role_FU == 1)]['ORtg'])
-np.mean(players.loc[(players.decision == 1) & (players.role_FU == 0)]['ORtg'])
-np.mean(players.loc[(players.decision == 1) & (players.role_FU == 1)]['DRtg'])
-np.mean(players.loc[(players.decision == 1) & (players.role_FU == 0)]['DRtg'])
+np.mean(players.loc[(players.decision == 1) & (players.Role_First Unit == 1)]['ORtg'])
+np.mean(players.loc[(players.decision == 1) & (players.Role_First Unit == 0)]['ORtg'])
+np.mean(players.loc[(players.decision == 1) & (players.Role_First Unit == 1)]['DRtg'])
+np.mean(players.loc[(players.decision == 1) & (players.Role_First Unit == 0)]['DRtg'])
 
-sum_ORtg_top5 = sum(players.loc[(players.decision == 1) & (players.role_FU == 1)]['ORtg'])
-sum_ORtg_mid5 = sum(players.loc[(players.decision == 1) & (players.role_FU == 0)]['ORtg'])
-sum_DRtg_top5 = sum(players.loc[(players.decision == 1) & (players.role_FU == 1)]['DRtg'])
-sum_DRtg_mid5 = sum(players.loc[(players.decision == 1) & (players.role_FU == 0)]['DRtg'])
+sum_ORtg_top5 = sum(players.loc[(players.decision == 1) & (players.Role_First Unit == 1)]['ORtg'])
+sum_ORtg_mid5 = sum(players.loc[(players.decision == 1) & (players.Role_First Unit == 0)]['ORtg'])
+sum_DRtg_top5 = sum(players.loc[(players.decision == 1) & (players.Role_First Unit == 1)]['DRtg'])
+sum_DRtg_mid5 = sum(players.loc[(players.decision == 1) & (players.Role_First Unit == 0)]['DRtg'])
 sum(players.loc[players.decision == 1]['Salary 2018-19'])
 
 win = b0 + b1*sum_ORtg_top5 + b2*sum_ORtg_mid5 + b3*sum_DRtg_top5 + b4*sum_DRtg_mid5
@@ -223,10 +237,10 @@ min_victories_to_champ = 0.7598130494939783
 test = pd.read_csv('/Users/mac/GitHub/Optimizing-NBA-Player-Selection/Datasets/total_team_data.csv')
 i = 'Milwaukee Bucks'
 test.loc[test.Team == i]['ORtg_mid5'].sum()
-mb1 = sum(players.loc[(players.Team == i) & (players.role_FU == 1)]['ORtg'])
-mb2 = sum(players.loc[(players.Team == i) & (players.role_SU == 1)]['ORtg'])
-mb3 = sum(players.loc[(players.Team == i) & (players.role_FU == 1)]['DRtg'])
-mb4 = sum(players.loc[(players.Team == i) & (players.role_SU == 1)]['DRtg'])
+mb1 = sum(players.loc[(players.Team == i) & (players.Role_First Unit == 1)]['ORtg'])
+mb2 = sum(players.loc[(players.Team == i) & (players.Role_Second Unit == 1)]['ORtg'])
+mb3 = sum(players.loc[(players.Team == i) & (players.Role_First Unit == 1)]['DRtg'])
+mb4 = sum(players.loc[(players.Team == i) & (players.Role_Second Unit == 1)]['DRtg'])
 
 win = b0 + b1*mb1 + b2*mb2 + b3*mb3 + b4*mb4
 win

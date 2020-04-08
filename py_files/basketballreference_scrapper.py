@@ -1,8 +1,8 @@
 # @Author: Pipe galera
 # @Date:   05-04-2020
 # @Email:  pipegalera@gmail.com
-# @Last modified by:   Pipe galera
-# @Last modified time: 08-04-2020
+# @Last modified by:   pipegalera
+# @Last modified time: 2020-04-08T20:48:27+02:00
 
 
 # Packages
@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 import os
-os.chdir("/Users/fgm.si/Documents/GitHub/Optimizing-NBA-Player-Selection")
+os.chdir("/Users/pipegalera/Documents/GitHub/Optimizing-NBA-Player-Selection")
 
 ###############################################################################
 #                            PLAYERS DATA                                     #
@@ -104,7 +104,14 @@ regular_stats
 
 # Merge datasets
 all_stats = pd.merge(adv_stats, regular_stats, on = ["Player", "Team", "Pos", "Year"])
-all_stats.columns
+
+
+# Correct the data types
+all_stats.iloc[:,4:] = all_stats.iloc[:,4:].apply(pd.to_numeric)
+
+#Check
+all_stats.loc[all_stats["Player"] == "Brandon Knight"]
+all_stats.loc[all_stats['Team'] == '{}'.format('CLE')].nlargest(20,'PER')[["Player", "PER", "Team"]]
 
 # Save dataset
 all_stats.to_csv("out_data/players_data.csv", index = False)
@@ -138,30 +145,33 @@ salaries['Signed Using'].replace(0, np.nan, inplace = True)
 
 salaries_list = ['Salary 2019-20', 'Salary 2020-21', 'Salary 2021-22', 'Salary 2022-23', 'Salary 2023-24', 'Salary 2023-2024', 'Guaranteed']
 
-for i in salaries_list:
+for i in salaries.columns[2:]:
     salaries[i] = salaries[i].replace('', 0)
-    salaries[i] = salaries[i].apply(pd.to_numeric)
 
-"""
-Agregating the contracts within the same team.
+
+#Check
+#all_stats.loc[all_stats['Team'] == 'TOT']
+salaries.loc[salaries["Player"] == "Alfonzo McKinnie"] # 3 contrats
+# Agregating the contracts within the same team.
 salaries = salaries.groupby(['Player', 'Team', 'Guaranteed'], as_index = False ).sum()
-salaries.loc[salaries.Player == "Dwight Howard"]
-salaries = salaries.groupby(['Player', 'Team', 'Guaranteed'], as_index = False ).sum()
-salaries.loc[salaries.Player == "Dwight Howard"]
-"""
+salaries.loc[salaries.Player == "Alfonzo McKinnie"] # 1 contract, correspond with https://hoopshype.com/player/alfonzo-mckinnie/salary/
 
 #########################################
 #  Merging Salaries with all the stats  #
 #########################################
 
-all_stats  = all_stats[all_stats["Year"] == 2020].drop("Year", axis = 1).reset_index(drop = True)
+# Note that we will drop all the observations without salaries (e.g: Brandon Knight of CLE, but not the one of DET)
+#all_stats  = all_stats[all_stats["Year"] == 2020].drop("Year", axis = 1).reset_index(drop = True)
 
 # Check if right:
-all_stats[all_stats["Team"] == "BOS"]
-salaries[salaries["Team"] == "BOS"]
+all_stats[all_stats["Team"] == "CLE"].sort_values(by = "Player")
+salaries[salaries["Team"] == "CLE"].sort_values(by = "Player")
 
-data_players = pd.merge(all_stats, salaries, on = ['Player', 'Team', ]).reset_index(drop = True)
-data_players
+data_players = pd.merge(all_stats, salaries, on = ['Player', 'Team']).reset_index(drop = True)
+
+# Check
+data_players[data_players['Team'] == 'Cleveland Cavaliers']
+data_players.loc[data_players.Player == "Alfonzo McKinnie"]
 
 #########################
 #  Tidying the dataset  #
@@ -169,42 +179,42 @@ data_players
 
 # Creating a dictionary to map the name of the teams
 teams_dict = {
-'CLE': 'Cleveland Cavaliers',
-'TOR': 'Toronto Raptors',
-'WAS': 'Washington Wizards',
-'BOS': 'Boston Celtics',
-'CHI': 'Chicago Bulls',
-'MIA': 'Miami Heat',
-'IND': 'Indiana Pacers',
-'BRK': 'Brooklyn Nets',
-'CHO': 'Charlotte Hornets',
-'ORL': 'Orlando Magic',
-'NYK': 'New York Knicks',
-'MIL': 'Milwaukee Bucks',
-'ATL': 'Atlanta Hawks',
-'DET': 'Detroit Pistons',
-'PHI': 'Philadelphia 76ers',
-'DAL': 'Dallas Mavericks',
-'DEN': 'Denver Nuggets',
-'GSW': 'Golden State Warriors',
-'HOU': 'Houston Rockets',
-'LAC': 'Los Angeles Clippers',
-'LAL': 'Los Angeles Lakers',
-'MEM': 'Memphis Grizzlies',
-'MIN': 'Minnesota Timberwolves',
-'NOP': 'New Orleans Pelicans',
-'OKC': 'Oklahoma City Thunder',
-'PHO': 'Phoenix Suns',
-'POR': 'Portland Trail Blazers',
-'SAC': 'Sacramento Kings',
-'SAS': 'San Antonio Spurs',
-'UTA': 'Utah Jazz'
-}
+    'CLE': 'Cleveland Cavaliers',
+    'TOR': 'Toronto Raptors',
+    'WAS': 'Washington Wizards',
+    'BOS': 'Boston Celtics',
+    'CHI': 'Chicago Bulls',
+    'MIA': 'Miami Heat',
+    'IND': 'Indiana Pacers',
+    'BRK': 'Brooklyn Nets',
+    'CHO': 'Charlotte Hornets',
+    'ORL': 'Orlando Magic',
+    'NYK': 'New York Knicks',
+    'MIL': 'Milwaukee Bucks',
+    'ATL': 'Atlanta Hawks',
+    'DET': 'Detroit Pistons',
+    'PHI': 'Philadelphia 76ers',
+    'DAL': 'Dallas Mavericks',
+    'DEN': 'Denver Nuggets',
+    'GSW': 'Golden State Warriors',
+    'HOU': 'Houston Rockets',
+    'LAC': 'Los Angeles Clippers',
+    'LAL': 'Los Angeles Lakers',
+    'MEM': 'Memphis Grizzlies',
+    'MIN': 'Minnesota Timberwolves',
+    'NOP': 'New Orleans Pelicans',
+    'OKC': 'Oklahoma City Thunder',
+    'PHO': 'Phoenix Suns',
+    'POR': 'Portland Trail Blazers',
+    'SAC': 'Sacramento Kings',
+    'SAS': 'San Antonio Spurs',
+    'UTA': 'Utah Jazz'}
 
 # Mapping teams
 data_players['Team'] = data_players['Team'].map(teams_dict)
-data_players
-data_players.columns
+# Check
+data_players[data_players['Team'] == 'CLE']
+data_players.loc[data_players.Player == "Alfonzo McKinnie"]
 
 # Clearning data types
 data_players.dtypes
@@ -228,12 +238,15 @@ for key, value in teams_dict.items():
 fu["Role"] = "First Unit"
 su["Role"] = "Second Unit"
 tu["Role"] = "Third Unit"
-data_players = pd.concat([fu,su, tu])
+data_players_units = pd.concat([fu,su, tu])
+
+#Check
+len(data_players) == len(data_players)
 
 # Check
-data_players.loc[data_players['Team'] == '{}'.format('Miami Heat')].nlargest(20,'MP')[["Player", "MP", "Role"]]
+data_players_units.loc[data_players_units['Team'] == '{}'.format('Cleveland Cavaliers')].nlargest(20,'MP')[["Player", "MP", "Role"]]
 
-data_players.to_csv('out_data/players_data.csv', index = False)
+data_players_units.to_csv('out_data/players_data.csv', index = False)
 
 ###############################################################################
 ###############################################################################
@@ -270,47 +283,5 @@ team_data.columns = headers
 team_data = team_data.drop(columns = ['W', 'L'])
 team_data.reset_index(drop = True)
 
-#########################
-#  Tidying the dataset  #
-#########################
-
-# Creating a dictionary to map the conferences of the teams
-
-conferences_dict = {
-# East
-'Cleveland Cavaliers': "East",
-'Toronto Raptors': "East",
-'Washington Wizards': "East",
-'Boston Celtics': "East",
-'Chicago Bulls': "East",
-'Miami Heat': "East",
-'Indiana Pacers': "East",
-'Brooklyn Nets': "East",
-'Charlotte Hornets': "East",
-'Orlando Magic': "East",
-'New York Knicks': "East",
-'Milwaukee Bucks': "East",
-'Atlanta Hawks': "East",
-'Detroit Pistons': "East",
-'Philadelphia 76ers': "East",
-# West
-'Dallas Mavericks': "West",
-'Denver Nuggets': "West",
-'Golden State Warriors': "West",
-'Houston Rockets': "West",
-'Los Angeles Clippers': "West",
-'Los Angeles Lakers': "West",
-'Memphis Grizzlies': "West",
-'Minnesota Timberwolves': "West",
-'New Orleans Pelicans': "West",
-'Oklahoma City Thunder': "West",
-'Phoenix Suns': "West",
-'Portland Trail Blazers': "West",
-'Sacramento Kings': "West",
-'San Antonio Spurs': "West",
-'Utah Jazz': "West"
-}
-team_data['Conference'] = team_data['Team'].map(conferences_dict)
-team_data
 # Save data
 team_data.to_csv('out_data/team_data.csv', index = False)
